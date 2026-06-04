@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Извештаји – ДЕПС</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e9eef5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 48px;
+    }
+
+    h1.page-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a3a6b;
+      margin-bottom: 20px;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Card ── */
+    .card {
+      display: flex;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 10px;
+      overflow: visible;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      transition: max-width 0.22s ease;
+    }
+
+    .card.wide { max-width: 1380px; }
+
+    /* ══════════ SIDEBAR ══════════ */
+    .sidebar {
+      width: 252px;
+      flex-shrink: 0;
+      background: #1b3b6f;
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
+    }
+
+    .sidebar ul { list-style: none; }
+
+    .sidebar li {
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .sidebar li button {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      color: #b8cde8;
+      font-size: 12.5px;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.13s, color 0.13s;
+      line-height: 1.4;
+    }
+
+    .sidebar li button:hover {
+      background: rgba(255,255,255,0.08);
+      color: #e8f0fb;
+    }
+
+    .sidebar li.active button {
+      background: #2563b0;
+      color: #fff;
+    }
+
+    .sidebar .ico {
+      flex-shrink: 0;
+      width: 19px;
+      height: 19px;
+      opacity: 0.75;
+    }
+
+    .sidebar li.active .ico,
+    .sidebar li button:hover .ico { opacity: 1; }
+
+    /* ── Сепаратор за комбиновани извештај ── */
+    .sidebar li.sep-top { border-top: 2px solid rgba(255,255,255,0.14); }
+
+    /* ══════════ CONTENT ══════════ */
+    .content {
+      flex: 1;
+      background: #fff;
+      padding: 26px 28px 28px;
+      border-radius: 0 10px 10px 0;
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a3a6b;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e9f0;
+      margin-bottom: 20px;
+    }
+
+    .panel-header > svg { color: #2563b0; flex-shrink: 0; }
+
+    /* ── Form groups ── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label, .form-row-2 .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 0;
+    }
+
+    .req { color: #e53e3e; margin-left: 1px; }
+
+    /* ── Standard select ── */
+    select.std-select {
+      padding: 8px 28px 8px 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #2d3748;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+      appearance: none;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    select.std-select:focus {
+      outline: none;
+      border-color: #2563b0;
+      box-shadow: 0 0 0 2px rgba(37,99,176,0.14);
+    }
+
+    /* ── Select са календар иконицом ── */
+    select.cal-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E");
+    }
+
+    /* ── Text/number inputs ── */
+    input.std-input {
+      padding: 8px 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #2d3748;
+      width: 100%;
+    }
+
+    input.std-input.with-calendar {
+      padding-right: 32px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E") no-repeat right 10px center;
+    }
+
+    input.std-input:focus {
+      outline: none;
+      border-color: #2563b0;
+      box-shadow: 0 0 0 2px rgba(37,99,176,0.14);
+    }
+
+    input.std-input::placeholder { color: #a0aec0; }
+
+    /* ══════════ CUSTOM MULTISELECT ══════════ */
+    .ms-wrap { position: relative; }
+
+    .ms-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 5px;
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+      min-height: 36px;
+      transition: border-color 0.12s, box-shadow 0.12s;
+    }
+
+    .ms-wrap.open .ms-head {
+      border-color: #2563b0;
+      box-shadow: 0 0 0 2px rgba(37,99,176,0.14);
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .ms-val {
+      font-size: 13px;
+      color: #2d3748;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .ms-val.ph { color: #a0aec0; }
+
+    .ms-caret {
+      flex-shrink: 0;
+      margin-left: 6px;
+      color: #718096;
+      transition: transform 0.15s;
+    }
+
+    .ms-wrap.open .ms-caret { transform: rotate(180deg); }
+
+    .ms-drop {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      background: #fff;
+      border: 1px solid #2563b0;
+      border-top: none;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      max-height: 210px;
+      overflow-y: auto;
+    }
+
+    .ms-wrap.open .ms-drop { display: block; }
+
+    .ms-opt {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #2d3748;
+      cursor: pointer;
+      transition: background 0.09s;
+    }
+
+    .ms-opt:hover { background: #eef3ff; }
+
+    .ms-opt.all {
+      font-weight: 600;
+      color: #1a3a6b;
+      border-bottom: 1px solid #e5e9f0;
+      background: #f8fafc;
+    }
+
+    .ms-opt.all:hover { background: #eef3ff; }
+
+    .ms-opt input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #2563b0;
+      flex-shrink: 0;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .ms-opt span { line-height: 1.3; }
+
+    .ms-drop::-webkit-scrollbar { width: 5px; }
+    .ms-drop::-webkit-scrollbar-track { background: #f8fafc; }
+    .ms-drop::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+
+    /* ══════════ DATE SECTIONS (стандардни) ══════════ */
+    .date-section { display: none; }
+    .date-section.show { display: block; }
+
+    /* ══════════ CHECKBOXES + BUTTON ══════════ */
+    .cb-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .cb-lbl {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #2d3748;
+      cursor: pointer;
+    }
+
+    .cb-lbl input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #2563b0;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    hr.divider { border: none; border-top: 1px solid #e5e9f0; margin-bottom: 16px; }
+
+    .btn-submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 11px 20px;
+      background: #2563b0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.14s;
+    }
+
+    .btn-submit:hover { background: #1a4f96; }
+    .btn-submit:active { background: #163e7a; }
+
+    /* ══════════ КОМБИНОВАНИ ИЗВЕШТАЈ ══════════ */
+    .cmb-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px 22px;
+      margin-bottom: 16px;
+    }
+
+    .cmb-grid .form-group { margin-bottom: 0; }
+
+    /* ── Секцијски оквир (Показатељи / Акција) ── */
+    .section-box {
+      border: 1px solid #d8dee8;
+      border-radius: 8px;
+      padding: 16px 18px 14px;
+      margin-bottom: 18px;
+    }
+
+    .section-box > legend {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2d3748;
+      padding: 0 8px;
+      margin-left: 2px;
+    }
+
+    /* ── Ред показатеља ── */
+    .ind-row {
+      display: flex;
+      gap: 18px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .ind-row:last-of-type { margin-bottom: 6px; }
+
+    .ind-row .form-group { margin-bottom: 0; }
+
+    .ind-pokazatelj { flex: 1 1 0; min-width: 0; }
+
+    .ind-source {
+      flex: 1.5 1 0;
+      min-width: 0;
+      display: flex;
+      gap: 14px;
+    }
+
+    .ind-source .form-group { flex: 1 1 0; min-width: 0; }
+
+    .btn-trash { flex-shrink: 0; }
+
+    .btn-trash {
+      height: 36px;
+      width: 46px;
+      display: none; /* сакривено на захтев */
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #cbd5e0;
+      border-radius: 5px;
+      color: #718096;
+      cursor: pointer;
+      transition: all 0.13s;
+    }
+
+    .btn-trash:hover {
+      background: #fdf0f0;
+      border-color: #e8a3a3;
+      color: #d64545;
+    }
+
+    .btn-add {
+      display: none; /* сакривено на захтев */
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      padding: 6px 10px;
+      background: transparent;
+      border: none;
+      color: #2563b0;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.12s;
+    }
+
+    .btn-add:hover { background: #eef3ff; }
+
+    /* ── Акција ── */
+    .act-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .act-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .act-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #2563b0;
+      cursor: pointer;
+      margin: 1px 0 0;
+      flex-shrink: 0;
+    }
+
+    .act-check > span { display: block; min-width: 0; }
+    .act-title { display: block; font-size: 13.5px; color: #2d3748; line-height: 1.3; }
+    .act-desc { display: block; font-size: 11.5px; color: #8a96a8; margin-top: 3px; line-height: 1.4; }
+
+    .btn-download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 13px 20px;
+      background: #1b3b8f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.14s;
+    }
+
+    .btn-download:hover { background: #16306f; }
+    .btn-download:active { background: #112556; }
+
+    /* ══════════ КОМБИНОВАНИ ВИШЕ ПЕРИОДА ══════════ */
+    .mp-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+      align-items: stretch; /* картице једнаке висине као на мокапу */
+    }
+
+    .mp-box { margin-bottom: 0; }
+
+    .mp-box > legend {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2d3748;
+      padding: 0 8px;
+    }
+
+    .mp-box .form-row-2 .form-group { margin-bottom: 0; }
+
+    .mp-source {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mp-source .form-group { margin-bottom: 0; }
+
+    @media (max-width: 720px) {
+      .mp-pair { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">Извештаји</h1>
+
+  <div class="card">
+
+    <!-- ════════════════════════════
+         SIDEBAR
+         ════════════════════════════ -->
+    <nav class="sidebar">
+      <ul>
+
+        <li class="active" id="tab-ugalj">
+          <button onclick="selectReport('ugalj', 'Извештај производње угља', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 20h20M4 20V10l8-7 8 7v10"/>
+              <rect x="9" y="14" width="6" height="6" rx="0.4"/>
+            </svg>
+            Производња угља
+          </button>
+        </li>
+
+        <li id="tab-otkrivka">
+          <button onclick="selectReport('otkrivka', 'Извештај производње откривке', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 5h20M2 10h20M2 15h20M2 20h20"/>
+              <path d="M6 5v4M18 15v5"/>
+            </svg>
+            Производња откривке
+          </button>
+        </li>
+
+        <li id="tab-elektricna">
+          <button onclick="selectReport('elektricna', 'Извештај производње електричне енергије', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L4.5 13.5H12l-1 8.5 8.5-11.5H12L13 2z"/>
+            </svg>
+            Производња електричне енергије
+          </button>
+        </li>
+
+        <li id="tab-toplotna">
+          <button onclick="selectReport('toplotna', 'Извештај производње топлотне енергије', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/>
+            </svg>
+            Производња топлотне енергије
+          </button>
+        </li>
+
+        <li id="tab-energenti">
+          <button onclick="selectReport('energenti', 'Извештај потрошње енергената', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8.5 14.5c0-3 3.5-5 3.5-9 0 0 3 2.5 3 6.5a6 6 0 01-12 0c0-2 1-4 2-5 0 3 1 4 1 4s1.5-1.5 2.5-5"/>
+            </svg>
+            Потрошња енергената
+          </button>
+        </li>
+
+        <li id="tab-co2">
+          <button onclick="selectReport('co2', 'Извештај CO₂ емисије', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 10a6 6 0 00-11.91-1A4 4 0 005 17h13a3 3 0 000-7z"/>
+              <path d="M8 21v-2M12 21v-3M16 21v-2"/>
+            </svg>
+            CO₂ емисија
+          </button>
+        </li>
+
+        <li id="tab-voda">
+          <button onclick="selectReport('voda', 'Извештај потрошње воде', 'standard')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.5 9 4 13.5 4 16a8 8 0 0016 0c0-2.5-2.5-7-8-14z"/>
+            </svg>
+            Вода
+          </button>
+        </li>
+
+        <!-- ── Комбиновани извештаји ── -->
+        <li class="sep-top" id="tab-kombinovani">
+          <button onclick="selectReport('kombinovani', 'Комбиновани извештај један период', 'combined')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/>
+              <path d="M14 2v6h6"/>
+            </svg>
+            Комбиновани извештај један период
+          </button>
+        </li>
+
+        <li id="tab-multi">
+          <button onclick="selectReport('multi', 'Комбиновани извештај више периода', 'multi')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/>
+              <path d="M14 2v6h6"/>
+            </svg>
+            Комбиновани извештај више периода
+          </button>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- ════════════════════════════
+         CONTENT
+         ════════════════════════════ -->
+    <main class="content">
+
+      <div class="panel-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/>
+          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+        </svg>
+        <span id="report-title">Извештај производње угља</span>
+      </div>
+
+      <!-- ─────────── СТАНДАРДНИ ПАНЕЛ ─────────── -->
+      <div id="panel-standard">
+
+        <div class="form-group">
+          <label>Огранак <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери огранак">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери огранак</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>РБ Колубара</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>РБ Костолац</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ХЕ Ђердап</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Објекат <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери објекат">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери објекат</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ А</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ Б</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Блок <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери блок">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери блок</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок А1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок А2</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок Б1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок Б2</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок В1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок В2</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Годинa/месец <span class="req">*</span></label>
+          <select class="std-select" id="period-sel" onchange="updateDateFields()">
+            <option value="">Изабери период</option>
+            <option value="mesec">Месец</option>
+            <option value="godina">Година</option>
+            <option value="period">Период (месец–месец)</option>
+          </select>
+        </div>
+
+        <div class="date-section" id="ds-mesec">
+          <div class="form-group">
+            <label>Месец <span class="req">*</span></label>
+            <input type="month" class="std-input" />
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-godina">
+          <div class="form-group">
+            <label>Година <span class="req">*</span></label>
+            <input type="number" class="std-input" placeholder="нпр. 2025" min="2000" max="2099" />
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-period">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Од месеца <span class="req">*</span></label>
+              <input type="month" class="std-input" />
+            </div>
+            <div class="form-group">
+              <label>До месеца <span class="req">*</span></label>
+              <input type="month" class="std-input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="cb-row">
+          <label class="cb-lbl"><input type="checkbox" /> Планирано</label>
+          <label class="cb-lbl"><input type="checkbox" checked /> Реализовано</label>
+          <label class="cb-lbl"><input type="checkbox" /> Проценат</label>
+        </div>
+
+        <hr class="divider" />
+
+        <button class="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Прикажи извештај
+        </button>
+
+      </div>
+
+      <!-- ─────────── КОМБИНОВАНИ ПАНЕЛ ─────────── -->
+      <div id="panel-combined" style="display:none">
+
+        <!-- Ред 1: Огранак / Објекат / Блок -->
+        <div class="cmb-grid">
+          <div class="form-group">
+            <label>Огранак <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери огранак">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери огранак</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>РБ Колубара</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>РБ Костолац</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ХЕ Ђердап</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Објекат <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери објекат">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери објекат</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ А</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ Б</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Блок <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери блок">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери блок</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок А1</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок А2</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок Б1</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок Б2</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок В1</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок В2</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ред 2: Месец/година -->
+        <div class="cmb-grid">
+          <div class="form-group">
+            <label>Месец/година <span class="req">*</span></label>
+            <select class="std-select cal-select">
+              <option value="">Изабери месец/годину</option>
+              <option value="mesec">Месец</option>
+              <option value="godina">Година</option>
+              <option value="period">Период (месец–месец)</option>
+            </select>
+          </div>
+          <div></div>
+          <div></div>
+        </div>
+
+        <!-- Ред 3: Месец / Година -->
+        <div class="cmb-grid">
+          <div class="form-group">
+            <label>Месец <span class="req">*</span></label>
+            <input type="text" class="std-input with-calendar" placeholder="ММ.ГГГГ" maxlength="7" />
+          </div>
+          <div class="form-group">
+            <label>Година <span class="req">*</span></label>
+            <input type="text" class="std-input with-calendar" placeholder="ГГГГ" maxlength="4" />
+          </div>
+          <div></div>
+        </div>
+
+        <!-- Показатељи -->
+        <fieldset class="section-box">
+          <legend>Показатељи</legend>
+          <div id="indicator-rows"><!-- редови се убацују JS-ом --></div>
+          <button type="button" class="btn-add" onclick="addIndicator()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Додај показатељ
+          </button>
+        </fieldset>
+
+        <!-- Акција -->
+        <fieldset class="section-box">
+          <legend>Акција</legend>
+          <div class="act-grid">
+            <label class="act-check">
+              <input type="checkbox" />
+              <span>
+                <span class="act-title">Проценат</span>
+                <span class="act-desc">Показује тенденцију показатеља 2 у односу на показатељ 1</span>
+              </span>
+            </label>
+            <label class="act-check">
+              <input type="checkbox" />
+              <span>
+                <span class="act-title">Дељење</span>
+                <span class="act-desc">Показује однос два показатеља</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button class="btn-download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/>
+          </svg>
+          Преузми извештај
+        </button>
+
+      </div>
+
+      <!-- ─────────── ПАНЕЛ: КОМБИНОВАНИ ВИШЕ ПЕРИОДА ─────────── -->
+      <div id="panel-multi" style="display:none">
+
+        <!-- Ред: Огранак / Објекат / Блок -->
+        <div class="cmb-grid">
+          <div class="form-group">
+            <label>Огранак <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери огранак">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери огранак</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>РБ Колубара</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>РБ Костолац</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ХЕ Ђердап</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Објекат <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери објекат">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери објекат</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ А</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ Б</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Блок <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери блок">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери блок</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок А1</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок А2</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок Б1</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок Б2</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок В1</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Блок В2</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Две картице показатеља (свака свој период) -->
+        <div class="mp-pair" id="mp-boxes"><!-- картице се убацују JS-ом --></div>
+
+        <!-- Акција -->
+        <fieldset class="section-box">
+          <legend>Акција</legend>
+          <div class="act-grid">
+            <label class="act-check">
+              <input type="checkbox" />
+              <span>
+                <span class="act-title">Проценат</span>
+                <span class="act-desc">Показује тенденцију показатеља 2 у односу на показатељ 1</span>
+              </span>
+            </label>
+            <label class="act-check">
+              <input type="checkbox" />
+              <span>
+                <span class="act-title">Дељење</span>
+                <span class="act-desc">Показује однос два показатеља</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button class="btn-download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/>
+          </svg>
+          Преузми извештај
+        </button>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    /* ══════════ Пребацивање извештаја ══════════ */
+    function selectReport(key, title, type) {
+      document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+      document.getElementById('tab-' + key).classList.add('active');
+      document.getElementById('report-title').textContent = title;
+
+      const panels = {
+        standard: document.getElementById('panel-standard'),
+        combined: document.getElementById('panel-combined'),
+        multi:    document.getElementById('panel-multi')
+      };
+      Object.keys(panels).forEach(k => {
+        panels[k].style.display = (k === type) ? 'block' : 'none';
+      });
+
+      // широка картица за комбиноване извештаје
+      document.querySelector('.card').classList.toggle('wide', type === 'combined' || type === 'multi');
+    }
+
+    /* ══════════ Условна поља датума (стандардни) ══════════ */
+    function updateDateFields() {
+      const v = document.getElementById('period-sel').value;
+      document.getElementById('ds-mesec').classList.toggle('show', v === 'mesec');
+      document.getElementById('ds-godina').classList.toggle('show', v === 'godina');
+      document.getElementById('ds-period').classList.toggle('show', v === 'period');
+    }
+
+    /* ══════════ Показатељи (динамички редови) ══════════ */
+    const INDICATOR_OPTS = [
+      'Производња угља',
+      'Производња откривке',
+      'Производња електричне енергије',
+      'Производња топлотне енергије',
+      'Потрошња енергената',
+      'CO₂ емисија',
+      'Вода'
+    ];
+    /* Матрица: показатељ → динамичка поља извора/агрегата.
+       Извучено из матрице (table.tsv). Свака колона са вредностима
+       постаје једно падајуће поље. Празно = нема додатних параметара. */
+    const INDICATOR_MATRIX = {
+      'Производња угља': [
+        { label: 'Врста производње', options: ['Планирано', 'Остварено'] }
+      ],
+      'Производња откривке': [
+        { label: 'Врста производње', options: ['Остварено'] }
+      ],
+      'Производња електричне енергије': [
+        { label: 'Врста производње', options: ['Остварено'] },
+        { label: 'Извор електричне енергије', options: ['На генератору', 'На прагу'] }
+      ],
+      'Производња топлотне енергије': [
+        { label: 'Врста производње', options: ['Остварено'] }
+      ],
+      'Потрошња енергената': [
+        { label: 'Тип', options: ['Дизел', 'Мазут'] }
+      ],
+      'CO₂ емисија': [],
+      'Вода': [
+        { label: 'Тип', options: ['Површинска', 'Отпадна'] }
+      ]
+    };
+
+    /* Гради HTML поља извора/агрегата у зависности од изабраног показатеља */
+    function sourceFieldsHTML(indicator) {
+      // показатељ још није изабран → онемогућено placeholder поље
+      if (!indicator) {
+        return `
+          <div class="form-group">
+            <label>Извор/агрегат <span class="req">*</span></label>
+            <select class="std-select" disabled><option>Изабери извор/агрегат</option></select>
+          </div>`;
+      }
+
+      const fields = INDICATOR_MATRIX[indicator] || [];
+
+      // показатељ нема додатне параметре (нпр. CO₂)
+      if (fields.length === 0) {
+        return `
+          <div class="form-group">
+            <label>Извор/агрегат <span class="req">*</span></label>
+            <select class="std-select" disabled><option>Није применљиво</option></select>
+          </div>`;
+      }
+
+      // једно или више поља према матрици
+      return fields.map(f => {
+        let opts;
+        if (f.options.length === 1) {
+          opts = `<option selected>${f.options[0]}</option>`;        // једина вредност → унапред изабрана
+        } else {
+          opts = `<option value="">Изабери</option>` + f.options.map(o => `<option>${o}</option>`).join('');
+        }
+        return `
+          <div class="form-group">
+            <label>${f.label} <span class="req">*</span></label>
+            <select class="std-select">${opts}</select>
+          </div>`;
+      }).join('');
+    }
+
+    function indicatorRowHTML() {
+      const inds = INDICATOR_OPTS.map(o => `<option>${o}</option>`).join('');
+      return `
+        <div class="ind-row">
+          <div class="form-group ind-pokazatelj">
+            <label>Показатељ <span class="ind-num"></span> <span class="req">*</span></label>
+            <select class="std-select" onchange="onIndicatorChange(this)"><option value="">Изабери показатељ</option>${inds}</select>
+          </div>
+          <div class="ind-source">${sourceFieldsHTML('')}</div>
+          <button type="button" class="btn-trash" onclick="removeIndicator(this)" title="Уклони показатељ">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6"/>
+            </svg>
+          </button>
+        </div>`;
+    }
+
+    /* Промена показатеља → поново исцртај поља извора/агрегата */
+    function onIndicatorChange(sel) {
+      sel.closest('.ind-row').querySelector('.ind-source').innerHTML = sourceFieldsHTML(sel.value);
+    }
+
+    function renumberIndicators() {
+      document.querySelectorAll('#indicator-rows .ind-num').forEach((el, i) => {
+        el.textContent = i + 1;
+      });
+    }
+
+    function addIndicator() {
+      const wrap = document.getElementById('indicator-rows');
+      wrap.insertAdjacentHTML('beforeend', indicatorRowHTML());
+      renumberIndicators();
+    }
+
+    function removeIndicator(btn) {
+      const wrap = document.getElementById('indicator-rows');
+      if (wrap.querySelectorAll('.ind-row').length <= 1) return; // увек бар један
+      btn.closest('.ind-row').remove();
+      renumberIndicators();
+    }
+
+    /* Иницијално: два показатеља (као на мокапу) */
+    (function initIndicators() {
+      const wrap = document.getElementById('indicator-rows');
+      wrap.innerHTML = indicatorRowHTML() + indicatorRowHTML();
+      renumberIndicators();
+    })();
+
+    /* ══════════ Више периода: картице показатеља ══════════ */
+    const MONTHS = ['Јануар','Фебруар','Март','Април','Мај','Јун','Јул','Август','Септембар','Октобар','Новембар','Децембар'];
+    const YEARS  = [2026, 2025, 2024, 2023, 2022, 2021];
+
+    function mpBoxHTML(num) {
+      const inds  = INDICATOR_OPTS.map(o => `<option>${o}</option>`).join('');
+      const months = MONTHS.map(m => `<option>${m}</option>`).join('');
+      const years  = YEARS.map(y => `<option>${y}</option>`).join('');
+      return `
+        <fieldset class="section-box mp-box">
+          <legend>Показатељ ${num}</legend>
+
+          <div class="form-group">
+            <label>Показатељ ${num} <span class="req">*</span></label>
+            <select class="std-select" onchange="onMpIndicatorChange(this)">
+              <option value="">Изабери показатељ</option>${inds}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Месец/година <span class="req">*</span></label>
+            <select class="std-select" onchange="onMpDateType(this)">
+              <option value="">Изабери период</option>
+              <option value="mesec">Месец</option>
+              <option value="godina">Година</option>
+              <option value="period">Период (месец–месец)</option>
+            </select>
+          </div>
+
+          <div class="mp-date-mesec" style="display:none">
+            <div class="form-group">
+              <label>Месец <span class="req">*</span></label>
+              <select class="std-select"><option value="">Изабери месец</option>${months}</select>
+            </div>
+            <div class="form-group">
+              <label>Година <span class="req">*</span></label>
+              <select class="std-select"><option value="">Изабери годину</option>${years}</select>
+            </div>
+          </div>
+
+          <div class="mp-date-godina" style="display:none">
+            <div class="form-group">
+              <label>Година <span class="req">*</span></label>
+              <select class="std-select"><option value="">Изабери годину</option>${years}</select>
+            </div>
+          </div>
+
+          <div class="mp-date-period" style="display:none">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>Од месеца <span class="req">*</span></label>
+                <select class="std-select"><option value="">Изабери месец</option>${months}</select>
+              </div>
+              <div class="form-group">
+                <label>До месеца <span class="req">*</span></label>
+                <select class="std-select"><option value="">Изабери месец</option>${months}</select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Година <span class="req">*</span></label>
+              <select class="std-select"><option value="">Изабери годину</option>${years}</select>
+            </div>
+          </div>
+
+          <div class="mp-source">${sourceFieldsHTML('')}</div>
+        </fieldset>`;
+    }
+
+    /* Промена показатеља у картици → поново исцртај поља извора (иста матрица) */
+    function onMpIndicatorChange(sel) {
+      sel.closest('.mp-box').querySelector('.mp-source').innerHTML = sourceFieldsHTML(sel.value);
+    }
+
+    /* Промена Месец/година у картици → прикажи одговарајућа поља датума */
+    function onMpDateType(sel) {
+      const box = sel.closest('.mp-box');
+      const v = sel.value;
+      box.querySelector('.mp-date-mesec').style.display  = v === 'mesec'  ? 'block' : 'none';
+      box.querySelector('.mp-date-godina').style.display = v === 'godina' ? 'block' : 'none';
+      box.querySelector('.mp-date-period').style.display = v === 'period' ? 'block' : 'none';
+    }
+
+    /* Иницијално: две картице (Показатељ 1 и Показатељ 2) */
+    (function initMpBoxes() {
+      const wrap = document.getElementById('mp-boxes');
+      if (wrap) wrap.innerHTML = mpBoxHTML(1) + mpBoxHTML(2);
+    })();
+
+    /* ══════════ Мулти-селект компонента ══════════ */
+    document.querySelectorAll('.ms-wrap').forEach(wrap => {
+      const head  = wrap.querySelector('.ms-head');
+      const val   = wrap.querySelector('.ms-val');
+      const ph    = wrap.dataset.ph;
+      const allCb = wrap.querySelector('[data-all]');
+      const cbs   = [...wrap.querySelectorAll('input[type="checkbox"]:not([data-all])')];
+
+      head.addEventListener('click', e => {
+        e.stopPropagation();
+        const wasOpen = wrap.classList.contains('open');
+        closeAllDropdowns();
+        if (!wasOpen) wrap.classList.add('open');
+      });
+
+      allCb.addEventListener('change', () => {
+        cbs.forEach(cb => cb.checked = allCb.checked);
+        refreshDisplay();
+      });
+
+      cbs.forEach(cb => cb.addEventListener('change', refreshDisplay));
+
+      function refreshDisplay() {
+        const sel = cbs.filter(cb => cb.checked);
+        const all = sel.length === cbs.length;
+
+        allCb.checked       = all;
+        allCb.indeterminate = sel.length > 0 && !all;
+
+        if (sel.length === 0) {
+          val.textContent = ph;
+          val.classList.add('ph');
+        } else {
+          val.classList.remove('ph');
+          if (all)                  val.textContent = 'Сви изабрани';
+          else if (sel.length === 1) val.textContent = sel[0].closest('label').querySelector('span').textContent;
+          else                       val.textContent = 'Изабрано: ' + sel.length;
+        }
+      }
+    });
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+    }
+
+    document.addEventListener('click', closeAllDropdowns);
+  </script>
+
+</body>
+</html>
