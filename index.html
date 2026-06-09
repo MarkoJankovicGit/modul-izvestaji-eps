@@ -322,6 +322,46 @@
 
     hr.divider { border: none; border-top: 1px solid #e5e9f0; margin-bottom: 16px; }
 
+    /* ══════════ АКЦИЈА (single-select radio) ══════════ */
+    .akcija-box {
+      border: 1px solid #d8dee8;
+      border-radius: 8px;
+      padding: 14px 16px 12px;
+      margin-bottom: 20px;
+    }
+
+    .akcija-box legend {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4a5568;
+      padding: 0 6px;
+      margin-left: 2px;
+    }
+
+    .akcija-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin-top: 4px;
+    }
+
+    .akcija-opt {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #2d3748;
+      cursor: pointer;
+    }
+
+    .akcija-opt input[type="radio"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #2563b0;
+      cursor: pointer;
+      margin: 0;
+    }
+
     .btn-submit {
       display: flex;
       align-items: center;
@@ -722,9 +762,20 @@
 
         <div class="cb-row">
           <label class="cb-lbl"><input type="checkbox" /> Планирано</label>
-          <label class="cb-lbl"><input type="checkbox" checked /> Реализовано</label>
-          <label class="cb-lbl"><input type="checkbox" /> Проценат</label>
+          <label class="cb-lbl"><input type="checkbox" checked /> Остварено</label>
         </div>
+
+        <fieldset class="akcija-box">
+          <legend>Акција</legend>
+          <div class="akcija-options">
+            <label class="akcija-opt"><input type="radio" name="akcija-std" value="suma" /> Сума</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-std" value="minimum" /> Минимум</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-std" value="maksimum" /> Максимум</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-std" value="prosek" /> Просек</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-std" value="procenat" /> Проценат</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-std" value="deljenje" /> Дељење</label>
+          </div>
+        </fieldset>
 
         <hr class="divider" />
 
