@@ -816,6 +816,7 @@
             <option value="mesec">Месец</option>
             <option value="godina">Година</option>
             <option value="period">Период (месец–месец)</option>
+            <option value="godgod">Период (година-година)</option>
           </select>
         </div>
 
@@ -846,9 +847,24 @@
           </div>
         </div>
 
-        <div class="cb-row">
-          <label class="cb-lbl"><input type="checkbox" /> Планирано</label>
-          <label class="cb-lbl"><input type="checkbox" checked /> Остварено</label>
+        <div class="date-section" id="ds-godgod">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Од године <span class="req">*</span></label>
+              <input type="number" class="std-input" placeholder="нпр. 2023" min="2000" max="2099" />
+            </div>
+            <div class="form-group">
+              <label>До године <span class="req">*</span></label>
+              <input type="number" class="std-input" placeholder="нпр. 2025" min="2000" max="2099" />
+            </div>
+          </div>
+        </div>
+
+        <div class="extra-field" id="ef-plan-ostar" style="display:none">
+          <div class="cb-row">
+            <label class="cb-lbl"><input type="checkbox" /> Планирано</label>
+            <label class="cb-lbl"><input type="checkbox" checked /> Остварено</label>
+          </div>
         </div>
 
         <fieldset class="akcija-box">
@@ -1139,24 +1155,6 @@
           </div>
         </div>
 
-        <!-- Блок -->
-        <div class="form-group">
-          <label>Блок <span class="req">*</span></label>
-          <div class="ms-wrap" data-ph="Изабери блок">
-            <div class="ms-head">
-              <span class="ms-val ph">Изабери блок</span>
-              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="ms-drop">
-              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
-              <label class="ms-opt"><input type="checkbox" /><span>Блок А1</span></label>
-              <label class="ms-opt"><input type="checkbox" /><span>Блок А2</span></label>
-              <label class="ms-opt"><input type="checkbox" /><span>Блок Б1</span></label>
-              <label class="ms-opt"><input type="checkbox" /><span>Блок Б2</span></label>
-            </div>
-          </div>
-        </div>
-
         <!-- Мерно место -->
         <div class="form-group">
           <label>Мерно место <span class="req">*</span></label>
@@ -1195,6 +1193,16 @@
             </div>
           </div>
           <div class="form-group">
+            <label>Тип загађујуће материје <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери тип</option>
+              <option>mg/m³</option>
+              <option>kg</option>
+              <option>GV</option>
+              <option>VA</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label>Мерна јединица <span class="req">*</span></label>
             <select class="std-select">
               <option value="">Изабери мерну јединицу</option>
@@ -1225,6 +1233,16 @@
                 <label class="ms-opt"><input type="checkbox" /><span>Тешки метали</span></label>
               </div>
             </div>
+          </div>
+          <div class="form-group">
+            <label>Тип загађујуће материје <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери тип</option>
+              <option>mg/m³</option>
+              <option>kg</option>
+              <option>GV</option>
+              <option>VA</option>
+            </select>
           </div>
           <div class="form-group">
             <label>Мерна јединица <span class="req">*</span></label>
@@ -1323,6 +1341,7 @@
             <option value="mesec">Месец</option>
             <option value="godina">Година</option>
             <option value="period">Период (месец–месец)</option>
+            <option value="godgod">Период (година-година)</option>
           </select>
         </div>
 
@@ -1349,6 +1368,19 @@
             <div class="form-group">
               <label>До месеца <span class="req">*</span></label>
               <input type="month" class="std-input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-godgod-p">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Од године <span class="req">*</span></label>
+              <input type="number" class="std-input" placeholder="нпр. 2023" min="2000" max="2099" />
+            </div>
+            <div class="form-group">
+              <label>До године <span class="req">*</span></label>
+              <input type="number" class="std-input" placeholder="нпр. 2025" min="2000" max="2099" />
             </div>
           </div>
         </div>
@@ -1481,6 +1513,7 @@
             <option value="mesec">Месец</option>
             <option value="godina">Година</option>
             <option value="period">Период (месец–месец)</option>
+            <option value="godgod">Период (година-година)</option>
           </select>
         </div>
 
@@ -1507,6 +1540,19 @@
             <div class="form-group">
               <label>До месеца <span class="req">*</span></label>
               <input type="month" class="std-input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-godgod-k">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Од године <span class="req">*</span></label>
+              <input type="number" class="std-input" placeholder="нпр. 2023" min="2000" max="2099" />
+            </div>
+            <div class="form-group">
+              <label>До године <span class="req">*</span></label>
+              <input type="number" class="std-input" placeholder="нпр. 2025" min="2000" max="2099" />
             </div>
           </div>
         </div>
@@ -1541,8 +1587,12 @@
     /* ══════════ Пребацивање извештаја ══════════ */
     /* Мапа: кључ извештаја → ID-ови extra поља која треба приказати */
     const EXTRA_FIELDS_MAP = {
-      elektricna: ['ef-elektricna'],
+      ugalj:      ['ef-plan-ostar'],
+      otkrivka:   ['ef-plan-ostar'],
+      elektricna: ['ef-plan-ostar', 'ef-elektricna'],
+      toplotna:   ['ef-plan-ostar'],
       energenti:  ['ef-energenti'],
+      co2:        [],
       voda:       ['ef-voda-tip', 'ef-voda-vrsta']
     };
 
@@ -1579,6 +1629,7 @@
       document.getElementById('ds-mesec').classList.toggle('show', v === 'mesec');
       document.getElementById('ds-godina').classList.toggle('show', v === 'godina');
       document.getElementById('ds-period').classList.toggle('show', v === 'period');
+      document.getElementById('ds-godgod').classList.toggle('show', v === 'godgod');
     }
 
     /* ══════════ Показатељи (динамички редови) ══════════ */
@@ -1589,7 +1640,11 @@
       'Производња топлотне енергије',
       'Потрошња енергената',
       'CO₂ емисија',
-      'Вода'
+      'Вода',
+      'SO₂',
+      'CO',
+      'NOₓ',
+      'Прашкасте материје'
     ];
     /* Матрица: показатељ → динамичка поља извора/агрегата.
        Извучено из матрице (table.tsv). Свака колона са вредностима
@@ -1614,7 +1669,11 @@
       'CO₂ емисија': [],
       'Вода': [
         { label: 'Тип', options: ['Површинска', 'Отпадна'] }
-      ]
+      ],
+      'SO₂':               [{ label: 'Поткатегорија', options: ['mg/m³', 'kg', 'GV', 'VA'] }],
+      'CO':                [{ label: 'Поткатегорија', options: ['mg/m³', 'kg', 'GV', 'VA'] }],
+      'NOₓ':               [{ label: 'Поткатегорија', options: ['mg/m³', 'kg', 'GV', 'VA'] }],
+      'Прашкасте материје':[{ label: 'Поткатегорија', options: ['mg/m³', 'kg', 'GV', 'VA'] }]
     };
 
     /* Гради HTML поља извора/агрегата у зависности од изабраног показатеља */
@@ -1729,6 +1788,7 @@
               <option value="mesec">Месец</option>
               <option value="godina">Година</option>
               <option value="period">Период (месец–месец)</option>
+              <option value="godgod">Период (година-година)</option>
             </select>
           </div>
 
@@ -1767,6 +1827,19 @@
             </div>
           </div>
 
+          <div class="mp-date-godgod" style="display:none">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>Од године <span class="req">*</span></label>
+                <select class="std-select"><option value="">Изабери годину</option>${years}</select>
+              </div>
+              <div class="form-group">
+                <label>До године <span class="req">*</span></label>
+                <select class="std-select"><option value="">Изабери годину</option>${years}</select>
+              </div>
+            </div>
+          </div>
+
           <div class="mp-source">${sourceFieldsHTML('')}</div>
         </fieldset>`;
     }
@@ -1783,6 +1856,7 @@
       box.querySelector('.mp-date-mesec').style.display  = v === 'mesec'  ? 'block' : 'none';
       box.querySelector('.mp-date-godina').style.display = v === 'godina' ? 'block' : 'none';
       box.querySelector('.mp-date-period').style.display = v === 'period' ? 'block' : 'none';
+      box.querySelector('.mp-date-godgod').style.display = v === 'godgod' ? 'block' : 'none';
     }
 
     /* Иницијално: две картице (Показатељ 1 и Показатељ 2) */
@@ -1797,6 +1871,7 @@
       document.getElementById('ds-mesec-p').classList.toggle('show', v === 'mesec');
       document.getElementById('ds-godina-p').classList.toggle('show', v === 'godina');
       document.getElementById('ds-period-p').classList.toggle('show', v === 'period');
+      document.getElementById('ds-godgod-p').classList.toggle('show', v === 'godgod');
     }
 
     /* ══════════ Условна поља датума (континуална мерења) ══════════ */
@@ -1805,6 +1880,7 @@
       document.getElementById('ds-mesec-k').classList.toggle('show', v === 'mesec');
       document.getElementById('ds-godina-k').classList.toggle('show', v === 'godina');
       document.getElementById('ds-period-k').classList.toggle('show', v === 'period');
+      document.getElementById('ds-godgod-k').classList.toggle('show', v === 'godgod');
     }
 
     /* ══════════ Аспект → динамичка поља (периодична мерења) ══════════ */
