@@ -632,6 +632,26 @@
           </button>
         </li>
 
+        <!-- ── Мерења ── -->
+        <li class="sep-top" id="tab-periodicna">
+          <button onclick="selectReport('periodicna', 'Појединачни извештај периодичних мерења', 'periodicna')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3h6M8 3v11.5L5 21h14l-3-6.5V3"/>
+              <path d="M11 8h2"/>
+            </svg>
+            Периодична мерења
+          </button>
+        </li>
+
+        <li id="tab-kontinualna">
+          <button onclick="selectReport('kontinualna', 'Појединачни извештај континуалних мерења', 'kontinualna')">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Континуална мерења
+          </button>
+        </li>
+
         <!-- ── Комбиновани извештаји ── -->
         <li class="sep-top" id="tab-kombinovani">
           <button onclick="selectReport('kombinovani', 'Комбиновани извештај један период', 'combined')">
@@ -720,6 +740,72 @@
               <label class="ms-opt"><input type="checkbox" /><span>Блок В1</span></label>
               <label class="ms-opt"><input type="checkbox" /><span>Блок В2</span></label>
             </div>
+          </div>
+        </div>
+
+        <!-- ── Динамичка поља по типу извештаја ── -->
+
+        <!-- Производња електричне енергије: извор -->
+        <div class="extra-field" id="ef-elektricna" style="display:none">
+          <div class="form-group">
+            <label>Извор електричне енергије</label>
+            <div class="cb-row" style="margin-bottom:0; margin-top:2px">
+              <label class="cb-lbl"><input type="checkbox" /> На генератору</label>
+              <label class="cb-lbl"><input type="checkbox" /> На прагу</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Потрошња енергената: тип -->
+        <div class="extra-field" id="ef-energenti" style="display:none">
+          <div class="form-group">
+            <label>Тип <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери тип">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери тип</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Дизел</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Мазут</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Вода: тип -->
+        <div class="extra-field" id="ef-voda-tip" style="display:none">
+          <div class="form-group">
+            <label>Тип <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери тип">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери тип</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Отпадна</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Подземна</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Површинска</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Пре мешања</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Расхладна</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Санитарна</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Вода за пиће</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Вода: врста водне активности -->
+        <div class="extra-field" id="ef-voda-vrsta" style="display:none">
+          <div class="form-group">
+            <label>Врста водне активности <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери врсту</option>
+              <option>Испуштена</option>
+              <option>Захваћена</option>
+            </select>
           </div>
         </div>
 
@@ -1003,20 +1089,474 @@
 
       </div>
 
+      <!-- ─────────── ПАНЕЛ: ПЕРИОДИЧНА МЕРЕЊА ─────────── -->
+      <div id="panel-periodicna" style="display:none">
+
+        <!-- Аспект — контролише динамичка поља -->
+        <div class="form-group">
+          <label>Аспект <span class="req">*</span></label>
+          <select class="std-select" id="per-aspekt" onchange="onAspectChange(this)">
+            <option value="">Изабери аспект</option>
+            <option value="vazduh">Ваздух</option>
+            <option value="voda">Вода</option>
+            <option value="zemlja">Земља</option>
+            <option value="buka">Бука</option>
+            <option value="radioaktivnost">Радиоактивност</option>
+          </select>
+        </div>
+
+        <!-- Огранак -->
+        <div class="form-group">
+          <label>Огранак <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери огранак">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери огранак</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>РБ Колубара</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>РБ Костолац</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ХЕ Ђердап</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Објекат -->
+        <div class="form-group">
+          <label>Објекат <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери објекат">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери објекат</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ А</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ Б</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Блок -->
+        <div class="form-group">
+          <label>Блок <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери блок">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери блок</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок А1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок А2</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок Б1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок Б2</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Мерно место -->
+        <div class="form-group">
+          <label>Мерно место <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери мерно место">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери мерно место</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Мерно место 1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Мерно место 2</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Мерно место 3</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Аспект: Ваздух ── -->
+        <div id="per-af-vazduh" style="display:none">
+          <div class="form-group">
+            <label>Загађујућа материја <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери загађујућу материју">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери загађујућу материју</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>SO₂</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>NOₓ</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>CO₂</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Прашина</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Флуориди</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Тешки метали</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Мерна јединица <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери мерну јединицу</option>
+              <option>mg/m³</option>
+              <option>μg/m³</option>
+              <option>%</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ── Аспект: Вода ── -->
+        <div id="per-af-voda" style="display:none">
+          <div class="form-group">
+            <label>Загађујућа материја <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери загађујућу материју">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери загађујућу материју</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>pH вредност</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>БПК₅</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>ХПК</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Суспендоване материје</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Хлориди</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Сулфати</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Тешки метали</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Мерна јединица <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери мерну јединицу</option>
+              <option>mg/l</option>
+              <option>μg/l</option>
+              <option>pH</option>
+              <option>%</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ── Аспект: Земља ── -->
+        <div id="per-af-zemlja" style="display:none">
+          <div class="form-group">
+            <label>Загађујућа материја <span class="req">*</span></label>
+            <div class="ms-wrap" data-ph="Изабери загађујућу материју">
+              <div class="ms-head">
+                <span class="ms-val ph">Изабери загађујућу материју</span>
+                <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="ms-drop">
+                <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Тешки метали</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Органске материје</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>pH вредност</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Нафтни угљоводоници</span></label>
+                <label class="ms-opt"><input type="checkbox" /><span>Пестициди</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Мерна јединица <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери мерну јединицу</option>
+              <option>mg/kg</option>
+              <option>g/kg</option>
+              <option>pH</option>
+              <option>%</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ── Аспект: Бука ── -->
+        <div id="per-af-buka" style="display:none">
+          <div class="form-group">
+            <label>Параметар мерења <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери параметар</option>
+              <option>Еквивалентни ниво (Leq)</option>
+              <option>Дневни ниво (Ld)</option>
+              <option>Вечерњи ниво (Le)</option>
+              <option>Ноћни ниво (Ln)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Мерна јединица <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери мерну јединицу</option>
+              <option>dB(A)</option>
+              <option>dB</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ── Аспект: Радиоактивност ── -->
+        <div id="per-af-radio" style="display:none">
+          <div class="form-group">
+            <label>Тип <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери тип</option>
+              <option>Акциони</option>
+              <option>Процедурални</option>
+              <option>Тешки метали/металоид</option>
+              <option>Природни</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Мерна јединица <span class="req">*</span></label>
+            <select class="std-select">
+              <option value="">Изабери мерну јединицу</option>
+              <option>kBq/m³</option>
+              <option>Bq/m³</option>
+              <option>mSv/h</option>
+              <option>μSv/h</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Год/Месец -->
+        <div class="form-group">
+          <label>Годинa/месец <span class="req">*</span></label>
+          <select class="std-select" id="period-sel-p" onchange="updateDateFieldsP()">
+            <option value="">Изабери период</option>
+            <option value="mesec">Месец</option>
+            <option value="godina">Година</option>
+            <option value="period">Период (месец–месец)</option>
+          </select>
+        </div>
+
+        <div class="date-section" id="ds-mesec-p">
+          <div class="form-group">
+            <label>Месец <span class="req">*</span></label>
+            <input type="month" class="std-input" />
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-godina-p">
+          <div class="form-group">
+            <label>Година <span class="req">*</span></label>
+            <input type="number" class="std-input" placeholder="нпр. 2025" min="2000" max="2099" />
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-period-p">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Од месеца <span class="req">*</span></label>
+              <input type="month" class="std-input" />
+            </div>
+            <div class="form-group">
+              <label>До месеца <span class="req">*</span></label>
+              <input type="month" class="std-input" />
+            </div>
+          </div>
+        </div>
+
+        <fieldset class="akcija-box">
+          <legend>Акција</legend>
+          <div class="akcija-options">
+            <label class="akcija-opt"><input type="radio" name="akcija-per" value="suma" /> Сума</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-per" value="minimum" /> Минимум</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-per" value="maksimum" /> Максимум</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-per" value="prosek" /> Просек</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-per" value="procenat" /> Проценат</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-per" value="deljenje" /> Дељење</label>
+          </div>
+        </fieldset>
+
+        <hr class="divider" />
+
+        <button class="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Прикажи извештај
+        </button>
+
+      </div>
+
+      <!-- ─────────── ПАНЕЛ: КОНТИНУАЛНА МЕРЕЊА ─────────── -->
+      <div id="panel-kontinualna" style="display:none">
+
+        <!-- Период — single select, иде на врх -->
+        <div class="form-group">
+          <label>Период <span class="req">*</span></label>
+          <select class="std-select">
+            <option value="">Изабери период</option>
+            <option>Дневно</option>
+            <option>48h</option>
+            <option>Месечно</option>
+            <option>Годишње</option>
+          </select>
+        </div>
+
+        <!-- Огранак -->
+        <div class="form-group">
+          <label>Огранак <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери огранак">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери огранак</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>РБ Колубара</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>РБ Костолац</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ХЕ Ђердап</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Објекат -->
+        <div class="form-group">
+          <label>Објекат <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери објекат">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери објекат</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ А</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>ТЕНТ Б</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Блок -->
+        <div class="form-group">
+          <label>Блок <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери блок">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери блок</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок А1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок А2</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок Б1</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Блок Б2</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Загађујућа материја -->
+        <div class="form-group">
+          <label>Загађујућа материја <span class="req">*</span></label>
+          <div class="ms-wrap" data-ph="Изабери загађујућу материју">
+            <div class="ms-head">
+              <span class="ms-val ph">Изабери загађујућу материју</span>
+              <svg class="ms-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="ms-drop">
+              <label class="ms-opt all"><input type="checkbox" data-all /><span>Обележи све</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>CO</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>SO₂</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>NOₓ</span></label>
+              <label class="ms-opt"><input type="checkbox" /><span>Прашкасте материје</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Поткатегорија -->
+        <div class="form-group">
+          <label>Поткатегорија <span class="req">*</span></label>
+          <select class="std-select">
+            <option value="">Изабери поткатегорију</option>
+            <option>mg/m³</option>
+            <option>kg</option>
+            <option>GV</option>
+            <option>VA</option>
+          </select>
+        </div>
+
+        <!-- Год/Месец -->
+        <div class="form-group">
+          <label>Годинa/месец <span class="req">*</span></label>
+          <select class="std-select" id="period-sel-k" onchange="updateDateFieldsK()">
+            <option value="">Изабери период</option>
+            <option value="mesec">Месец</option>
+            <option value="godina">Година</option>
+            <option value="period">Период (месец–месец)</option>
+          </select>
+        </div>
+
+        <div class="date-section" id="ds-mesec-k">
+          <div class="form-group">
+            <label>Месец <span class="req">*</span></label>
+            <input type="month" class="std-input" />
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-godina-k">
+          <div class="form-group">
+            <label>Година <span class="req">*</span></label>
+            <input type="number" class="std-input" placeholder="нпр. 2025" min="2000" max="2099" />
+          </div>
+        </div>
+
+        <div class="date-section" id="ds-period-k">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Од месеца <span class="req">*</span></label>
+              <input type="month" class="std-input" />
+            </div>
+            <div class="form-group">
+              <label>До месеца <span class="req">*</span></label>
+              <input type="month" class="std-input" />
+            </div>
+          </div>
+        </div>
+
+        <fieldset class="akcija-box">
+          <legend>Акција</legend>
+          <div class="akcija-options">
+            <label class="akcija-opt"><input type="radio" name="akcija-kon" value="suma" /> Сума</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-kon" value="minimum" /> Минимум</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-kon" value="maksimum" /> Максимум</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-kon" value="prosek" /> Просек</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-kon" value="procenat" /> Проценат</label>
+            <label class="akcija-opt"><input type="radio" name="akcija-kon" value="deljenje" /> Дељење</label>
+          </div>
+        </fieldset>
+
+        <hr class="divider" />
+
+        <button class="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Прикажи извештај
+        </button>
+
+      </div>
+
     </main>
   </div>
 
   <script>
     /* ══════════ Пребацивање извештаја ══════════ */
+    /* Мапа: кључ извештаја → ID-ови extra поља која треба приказати */
+    const EXTRA_FIELDS_MAP = {
+      elektricna: ['ef-elektricna'],
+      energenti:  ['ef-energenti'],
+      voda:       ['ef-voda-tip', 'ef-voda-vrsta']
+    };
+
     function selectReport(key, title, type) {
       document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
       document.getElementById('tab-' + key).classList.add('active');
       document.getElementById('report-title').textContent = title;
 
       const panels = {
-        standard: document.getElementById('panel-standard'),
-        combined: document.getElementById('panel-combined'),
-        multi:    document.getElementById('panel-multi')
+        standard:    document.getElementById('panel-standard'),
+        combined:    document.getElementById('panel-combined'),
+        multi:       document.getElementById('panel-multi'),
+        periodicna:  document.getElementById('panel-periodicna'),
+        kontinualna: document.getElementById('panel-kontinualna')
       };
       Object.keys(panels).forEach(k => {
         panels[k].style.display = (k === type) ? 'block' : 'none';
@@ -1024,6 +1564,13 @@
 
       // широка картица за комбиноване извештаје
       document.querySelector('.card').classList.toggle('wide', type === 'combined' || type === 'multi');
+
+      // прикажи/сакриј extra поља за стандардне извештаје
+      if (type === 'standard') {
+        document.querySelectorAll('.extra-field').forEach(el => el.style.display = 'none');
+        const toShow = EXTRA_FIELDS_MAP[key] || [];
+        toShow.forEach(id => document.getElementById(id).style.display = 'block');
+      }
     }
 
     /* ══════════ Условна поља датума (стандардни) ══════════ */
@@ -1243,6 +1790,40 @@
       const wrap = document.getElementById('mp-boxes');
       if (wrap) wrap.innerHTML = mpBoxHTML(1) + mpBoxHTML(2);
     })();
+
+    /* ══════════ Условна поља датума (периодична мерења) ══════════ */
+    function updateDateFieldsP() {
+      const v = document.getElementById('period-sel-p').value;
+      document.getElementById('ds-mesec-p').classList.toggle('show', v === 'mesec');
+      document.getElementById('ds-godina-p').classList.toggle('show', v === 'godina');
+      document.getElementById('ds-period-p').classList.toggle('show', v === 'period');
+    }
+
+    /* ══════════ Условна поља датума (континуална мерења) ══════════ */
+    function updateDateFieldsK() {
+      const v = document.getElementById('period-sel-k').value;
+      document.getElementById('ds-mesec-k').classList.toggle('show', v === 'mesec');
+      document.getElementById('ds-godina-k').classList.toggle('show', v === 'godina');
+      document.getElementById('ds-period-k').classList.toggle('show', v === 'period');
+    }
+
+    /* ══════════ Аспект → динамичка поља (периодична мерења) ══════════ */
+    const ASPECT_DIV_IDS = ['per-af-vazduh', 'per-af-voda', 'per-af-zemlja', 'per-af-buka', 'per-af-radio'];
+    const ASPECT_DIV_MAP = {
+      vazduh:        'per-af-vazduh',
+      voda:          'per-af-voda',
+      zemlja:        'per-af-zemlja',
+      buka:          'per-af-buka',
+      radioaktivnost:'per-af-radio'
+    };
+
+    function onAspectChange(sel) {
+      ASPECT_DIV_IDS.forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+      const target = ASPECT_DIV_MAP[sel.value];
+      if (target) document.getElementById(target).style.display = 'block';
+    }
 
     /* ══════════ Мулти-селект компонента ══════════ */
     document.querySelectorAll('.ms-wrap').forEach(wrap => {
